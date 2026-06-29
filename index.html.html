@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<meta name="theme-color" content="#1F5135" />
+<title>Ma Ferme</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700;800&display=swap');
+
+  :root{
+    --cream:#F6EFE2; --paper:#FBF7EE; --soil:#C75D3A; --soilDk:#A8472A;
+    --forest:#1F5135; --forest2:#2E7D4F; --cacao:#5B3A29; --gold:#E8A93A;
+    --go:#2FA84F; --danger:#D14B3D; --ink:#2A2018; --muted:#8A7E6E; --line:#E3D8C4;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; height:100%; }
+  body{
+    font-family:'Fredoka', system-ui, -apple-system, sans-serif; color:var(--ink);
+    background:radial-gradient(120% 80% at 50% 0%, var(--paper) 0%, var(--cream) 55%, #EFE5D2 100%);
+  }
+  #shell{ max-width:480px; margin:0 auto; min-height:100%; display:flex; flex-direction:column; position:relative; }
+
+  header{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    padding:12px 14px; position:sticky; top:0; z-index:5;
+    background:rgba(251,247,238,.92); backdrop-filter:blur(6px); border-bottom:1px solid var(--line);
+  }
+  .brand{ display:flex; align-items:center; gap:7px; font-weight:800; font-size:18px; color:var(--forest); }
+  .iconbtn{
+    width:48px; height:48px; border-radius:16px; border:none; cursor:pointer; background:#fff;
+    color:var(--ink); display:grid; place-items:center; box-shadow:0 2px 6px rgba(0,0,0,.08); font-size:22px;
+  }
+  .row-r{ display:flex; gap:6px; align-items:center; }
+  .pill{ font-size:12px; font-weight:700; padding:4px 9px; border-radius:999px; }
+  .pill.local{ background:#FBE6CF; color:var(--soilDk); }
+  .pill.cloud{ background:#D9F0DF; color:var(--forest); }
+
+  .trail{ display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:2px; padding:12px 10px 0; }
+  .chip{ width:44px; height:44px; border-radius:14px; display:grid; place-items:center; font-size:24px; color:#fff; box-shadow:0 2px 5px rgba(0,0,0,.12); }
+  .arrow{ font-size:26px; color:var(--muted); margin:0 2px; font-weight:800; }
+
+  main{ flex:1; padding:18px 16px 40px; }
+  .title{ text-align:center; margin-bottom:18px; }
+  .title b{ display:block; font-size:27px; font-weight:800; }
+  .title span{ font-size:17px; color:var(--muted); }
+
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .tile{
+    position:relative; background:#fff; border-radius:22px; border:3px solid var(--ink);
+    padding:22px 10px 16px; min-height:150px; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; gap:8px; cursor:pointer; box-shadow:0 4px 14px rgba(80,50,20,.08);
+    transition:transform .08s ease; text-align:center;
+  }
+  .tile .em{ font-size:58px; line-height:1; }
+  .tile.small .em{ font-size:46px; }
+  .tile .lb{ font-weight:700; font-size:18px; line-height:1.15; }
+  .tile.small .lb{ font-size:15px; }
+  .tile:active{ transform:scale(.96); }
+  .spk{ position:absolute; top:8px; right:8px; width:32px; height:32px; border-radius:10px; border:none; background:#F1E9D8; display:grid; place-items:center; cursor:pointer; font-size:15px; }
+
+  .big2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px; }
+  .bigtile{ border-radius:26px; padding:30px 10px; min-height:190px; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; box-shadow:0 8px 20px rgba(80,50,20,.18); color:#fff; transition:transform .08s ease; }
+  .bigtile:active{ transform:scale(.96); }
+  .bigtile .em{ font-size:76px; } .bigtile .lb{ font-size:22px; font-weight:800; }
+
+  .wide{ width:100%; border:none; border-radius:20px; color:#fff; cursor:pointer; padding:18px; font-size:20px; font-weight:800; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow:0 6px 16px rgba(0,0,0,.14); font-family:inherit; }
+
+  .counterWrap{ background:#fff; border-radius:24px; padding:22px 16px 26px; text-align:center; box-shadow:0 4px 14px rgba(80,50,20,.08); margin-bottom:18px; }
+  .counter{ display:flex; align-items:center; justify-content:center; gap:18px; margin:8px 0; }
+  .step{ width:78px; height:78px; border-radius:24px; border:none; color:#fff; font-size:46px; font-weight:800; cursor:pointer; line-height:1; box-shadow:0 4px 10px rgba(0,0,0,.18); }
+  .count{ font-size:64px; font-weight:800; min-width:90px; }
+  .unit{ font-size:20px; color:var(--muted); font-weight:700; }
+
+  .confirmCard{ background:#fff; border-radius:24px; padding:18px; display:flex; flex-direction:column; gap:12px; box-shadow:0 4px 14px rgba(80,50,20,.08); margin-bottom:18px; }
+  .cRow{ display:flex; align-items:center; gap:14px; }
+  .cChip{ width:52px; height:52px; border-radius:16px; display:grid; place-items:center; color:#fff; font-size:26px; }
+  .cBtns{ display:flex; gap:12px; }
+
+  .done{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding-top:40px; text-align:center; }
+  .doneCircle{ width:170px; height:170px; border-radius:50%; background:var(--go); display:grid; place-items:center; box-shadow:0 12px 30px rgba(47,168,79,.4); font-size:90px; color:#fff; }
+  .doneTxt{ font-size:34px; font-weight:800; color:var(--forest); margin-top:24px; }
+  .pop{ animation:pop .45s cubic-bezier(.2,1.4,.4,1); }
+  @keyframes pop{ 0%{ transform:scale(.3); opacity:0 } 100%{ transform:scale(1); opacity:1 } }
+
+  /* admin */
+  #admin{ position:absolute; inset:0; background:var(--cream); z-index:20; display:none; flex-direction:column; }
+  #admin.open{ display:flex; }
+  .abar{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--line); background:#fff; font-weight:800; font-size:18px; }
+  .tabs{ display:flex; gap:6px; padding:10px 12px; flex-wrap:wrap; background:#fff; border-bottom:1px solid var(--line); }
+  .tab{ border:none; background:#F1E9D8; color:var(--muted); padding:8px 14px; border-radius:12px; font-weight:700; cursor:pointer; font-size:14px; font-family:inherit; }
+  .tab.on{ background:var(--forest); color:#fff; }
+  .abody{ flex:1; overflow-y:auto; padding:14px; }
+  .hint{ font-size:14px; color:var(--muted); margin-bottom:12px; }
+  .empty{ background:#fff; border-radius:16px; padding:20px; color:var(--muted); text-align:center; }
+  .rep{ background:#fff; border-radius:14px; padding:12px; margin-bottom:10px; display:flex; align-items:center; gap:12px; border-left:6px solid var(--go); box-shadow:0 2px 8px rgba(80,50,20,.06); }
+  .rep .e{ font-size:30px; }
+  .rep b{ color:var(--ink); }
+  .rep .sub{ font-size:14px; color:var(--muted); }
+  .rep .ts{ font-size:12px; color:var(--muted); margin-top:2px; }
+  .mcard{ background:#fff; border-radius:14px; padding:12px; margin-bottom:10px; box-shadow:0 2px 8px rgba(80,50,20,.06); }
+  .mhead{ display:flex; align-items:center; gap:10px; }
+  .addbox{ background:#fff; border-radius:16px; padding:14px; margin-top:8px; box-shadow:0 2px 8px rgba(80,50,20,.06); }
+  input.txt{ width:100%; border:2px solid var(--line); border-radius:12px; padding:12px 14px; font-size:16px; margin-bottom:10px; outline:none; font-family:inherit; }
+  .pickrow{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+  .epick{ font-size:22px; width:40px; height:40px; border-radius:10px; border:2px solid var(--line); background:#fff; cursor:pointer; }
+  .epick.on{ border-color:var(--forest); background:#EAF3EC; }
+  .cpick{ width:34px; height:34px; border-radius:10px; border:none; cursor:pointer; }
+  .addbtn{ border:none; background:var(--forest); color:#fff; border-radius:12px; padding:12px 16px; font-weight:800; font-size:16px; cursor:pointer; font-family:inherit; }
+  .dangerbtn{ width:100%; border:2px solid var(--danger); background:#fff; color:var(--danger); border-radius:12px; padding:12px; font-weight:800; cursor:pointer; margin-top:8px; font-family:inherit; }
+  .zwrap{ margin-top:8px; padding-left:8px; border-left:2px dashed var(--line); }
+  .zrow{ display:flex; align-items:center; gap:8px; margin-bottom:4px; font-size:14px; color:var(--muted); }
+
+  :focus-visible{ outline:4px solid var(--gold); outline-offset:2px; }
+  @media (prefers-reduced-motion: reduce){ .tile:active,.bigtile:active{ transform:none; } .pop{ animation:none; } }
+</style>
+</head>
+<body>
+<div id="shell">
+  <header>
+    <button class="iconbtn" id="btnBack" data-action="back" style="visibility:hidden">‹</button>
+    <div class="brand">🌾 Ma Ferme</div>
+    <div class="row-r">
+      <span class="pill local" id="statusPill">Mode local</span>
+      <button class="iconbtn" id="btnSound" data-action="toggle-sound">🔊</button>
+      <button class="iconbtn" id="btnAdmin" data-action="open-admin" style="color:var(--muted)">⚙️</button>
+    </div>
+  </header>
+  <div class="trail" id="trail"></div>
+  <main id="app"></main>
+</div>
+
+<div id="admin">
+  <div class="abar">
+    <span>Espace du patron</span>
+    <button class="iconbtn" data-action="close-admin">✕</button>
+  </div>
+  <div class="tabs" id="adminTabs"></div>
+  <div class="abody" id="adminBody"></div>
+</div>
+
+<script>
+/* ============================================================================
+   CONFIGURATION FIREBASE
+   Tant que ce bloc est vide, l'appli marche en MODE LOCAL (sur ce téléphone).
+   Collez ici la config de VOTRE projet Firebase pour activer la synchro
+   multi-téléphone (voir la notice fournie). Exemple :
+
+   const FIREBASE_CONFIG = {
+     apiKey: "AIza....",
+     authDomain: "ma-ferme.firebaseapp.com",
+     projectId: "ma-ferme",
+     storageBucket: "ma-ferme.appspot.com",
+     messagingSenderId: "1234567890",
+     appId: "1:1234567890:web:abcdef"
+   };
+   ============================================================================ */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDzZk7UH46qmY3D5L-hXOmP38OS02BXH7s",
+  authDomain: "foret-integree.firebaseapp.com",
+  projectId: "foret-integree",
+  storageBucket: "foret-integree.firebasestorage.app",
+  messagingSenderId: "108993577403",
+  appId: "1:108993577403:web:f3c05bd9da7261539a849e"
+};
+
+const SDK = "https://www.gstatic.com/firebasejs/12.15.0/";
+
+/* ----------------------------------------------------------------- palette */
+const C = { soil:"#C75D3A", soilDk:"#A8472A", forest:"#1F5135", forest2:"#2E7D4F",
+  cacao:"#5B3A29", gold:"#E8A93A", go:"#2FA84F", danger:"#D14B3D", muted:"#8A7E6E" };
+
+const COLORS = [C.soil,C.forest,C.forest2,C.gold,C.cacao,"#B5894E","#9C5B2E","#D98A9E","#8A7E6E","#B7AFA0","#3E6E8E"];
+const EMOJIS = ["🌳","🍫","🥔","🍠","🍌","🌽","🌾","🍅","🥜","🫘","🌶️","🥬",
+  "🐖","🐐","🐑","🐔","🦆","🦃","🐓","🐇","🐄","🐝","🐟","🐈",
+  "👨🏿‍🌾","👩🏿‍🌾","🧑🏿‍🌾","👷🏿","🧍🏿"];
+
+const DEFAULT_CONFIG = {
+  workers:[
+    { id:"w1", name:"Kouassi", emoji:"👨🏿‍🌾", color:C.soil },
+    { id:"w2", name:"Awa", emoji:"👩🏿‍🌾", color:C.forest2 },
+    { id:"w3", name:"Yao", emoji:"🧑🏿‍🌾", color:C.gold },
+  ],
+  crops:[
+    { id:"hevea", name:"Hévéa", emoji:"🌳", color:C.forest, tag:"hevea",
+      zones:[{id:"h1", name:"Plantation hévéa (4 ha)"}] },
+    { id:"cacao", name:"Cacao", emoji:"🍫", color:C.cacao,
+      zones:[{id:"cn", name:"Cacao — nouvelle plantation (1 ha)"},
+             {id:"ca", name:"Cacao — ancienne plantation (1 ha)"}] },
+    { id:"manioc", name:"Manioc", emoji:"🥔", color:"#B5894E", zones:[] },
+    { id:"igname", name:"Igname", emoji:"🍠", color:"#9C5B2E", zones:[] },
+    { id:"plantain", name:"Banane plantain", emoji:"🍌", color:C.gold, zones:[] },
+  ],
+  animals:[
+    { id:"cochon", name:"Cochons", emoji:"🐖", color:"#D98A9E" },
+    { id:"chevre", name:"Chèvres", emoji:"🐐", color:"#8A7E6E" },
+    { id:"brebis", name:"Brebis", emoji:"🐑", color:"#B7AFA0" },
+    { id:"poule", name:"Poules", emoji:"🐔", color:C.soil, poultry:true },
+    { id:"canard", name:"Canards", emoji:"🦆", color:C.forest2, poultry:true },
+    { id:"dindon", name:"Dindons", emoji:"🦃", color:C.soilDk, poultry:true },
+  ],
+};
+
+const CROP_TASKS = [
+  { id:"arroser", label:"Arroser", emoji:"💧" },
+  { id:"planter", label:"Planter ou repiquer", emoji:"🌱" },
+  { id:"desherber", label:"Désherber", emoji:"🌿" },
+  { id:"tailler", label:"Tailler", emoji:"✂️" },
+  { id:"traiter", label:"Traiter contre les insectes", emoji:"🐛" },
+  { id:"engrais", label:"Mettre l'engrais ou le fumier", emoji:"💩" },
+  { id:"recolter", label:"Récolter", emoji:"🧺", qty:true, unit:"paniers", unitEmoji:"🧺" },
+  { id:"saignee", label:"Saignée du latex", emoji:"🩸", only:"hevea", qty:true, unit:"litres", unitEmoji:"🪣" },
+  { id:"probleme", label:"Il y a un problème", emoji:"⚠️", danger:true },
+];
+const ANIMAL_TASKS = [
+  { id:"nourrir", label:"Donner à manger", emoji:"🌾" },
+  { id:"eau", label:"Donner de l'eau", emoji:"💧" },
+  { id:"nettoyer", label:"Nettoyer l'enclos", emoji:"🧹" },
+  { id:"oeufs", label:"Ramasser les œufs", emoji:"🥚", poultry:true, qty:true, unit:"œufs", unitEmoji:"🥚" },
+  { id:"soigner", label:"Soigner ou vacciner", emoji:"💉" },
+  { id:"naissance", label:"Naissance", emoji:"🐣", qty:true, unit:"petits", useItem:true },
+  { id:"malade", label:"Un animal est malade", emoji:"🤒", danger:true, qty:true, unit:"animaux", useItem:true },
+  { id:"perte", label:"Un animal est mort", emoji:"☠️", danger:true, qty:true, unit:"animaux", useItem:true },
+  { id:"compter", label:"Compter le troupeau", emoji:"🔢", qty:true, unit:"animaux", useItem:true },
+];
+
+/* ============================================================== DATA LAYER */
+/* MODE LOCAL : localStorage. MODE CLOUD : Firestore temps réel + hors-ligne. */
+const isConfigured = !!(FIREBASE_CONFIG && FIREBASE_CONFIG.projectId);
+const DB = {
+  mode: "local",
+  fb: null,
+  cfgCb: null,
+  repCb: null,
+
+  async init(){
+    if(!isConfigured){ this.mode = "local"; return; }
+    try{
+      const [{ initializeApp }, auth, fs] = await Promise.all([
+        import(SDK+"firebase-app.js"),
+        import(SDK+"firebase-auth.js"),
+        import(SDK+"firebase-firestore.js"),
+      ]);
+      const app = initializeApp(FIREBASE_CONFIG);
+      const db = fs.initializeFirestore(app, {
+        localCache: fs.persistentLocalCache({ tabManager: fs.persistentMultipleTabManager() })
+      });
+      const a = auth.getAuth(app);
+      await auth.signInAnonymously(a);
+      this.fb = { fs, db, auth:a,
+        cfgRef: fs.doc(db, "meta", "config"),
+        repCol: fs.collection(db, "reports") };
+      this.mode = "cloud";
+    }catch(e){
+      console.error("Firebase indisponible, repli en mode local :", e);
+      this.mode = "local";
+    }
+  },
+
+  onConfig(cb){
+    this.cfgCb = cb;
+    if(this.mode === "cloud"){
+      const { fs } = this.fb;
+      fs.onSnapshot(this.fb.cfgRef, (snap)=>{
+        if(!snap.exists()){ this.saveConfig(DEFAULT_CONFIG); cb(DEFAULT_CONFIG); }
+        else cb(snap.data());
+      }, (err)=>{ console.error(err); cb(this._localCfg()); });
+    } else {
+      cb(this._localCfg());
+    }
+  },
+  _localCfg(){
+    try{ return JSON.parse(localStorage.getItem("farm:config")) || DEFAULT_CONFIG; }
+    catch{ return DEFAULT_CONFIG; }
+  },
+  async saveConfig(cfg){
+    if(this.mode === "cloud"){
+      const { fs } = this.fb;
+      await fs.setDoc(this.fb.cfgRef, cfg);
+    } else {
+      localStorage.setItem("farm:config", JSON.stringify(cfg));
+      if(this.cfgCb) this.cfgCb(cfg);
+    }
+  },
+
+  onReports(cb){
+    this.repCb = cb;
+    if(this.mode === "cloud"){
+      const { fs } = this.fb;
+      const q = fs.query(this.fb.repCol, fs.orderBy("ts","desc"), fs.limit(500));
+      fs.onSnapshot(q, (snap)=>{
+        const arr = []; snap.forEach(d=> arr.push({ id:d.id, ...d.data() }));
+        cb(arr);
+      }, (err)=>{ console.error(err); cb(this._localReps()); });
+    } else {
+      cb(this._localReps());
+    }
+  },
+  _localReps(){ try{ return JSON.parse(localStorage.getItem("farm:reports")) || []; } catch{ return []; } },
+  async addReport(rep){
+    if(this.mode === "cloud"){
+      const { fs } = this.fb;
+      await fs.addDoc(this.fb.repCol, rep);
+    } else {
+      const arr = this._localReps(); arr.unshift({ id:"r"+Date.now(), ...rep });
+      localStorage.setItem("farm:reports", JSON.stringify(arr));
+      if(this.repCb) this.repCb(arr);
+    }
+  },
+  async delReport(id){
+    if(this.mode === "cloud"){
+      const { fs } = this.fb;
+      await fs.deleteDoc(fs.doc(this.fb.db, "reports", id));
+    } else {
+      const arr = this._localReps().filter(r=> r.id !== id);
+      localStorage.setItem("farm:reports", JSON.stringify(arr));
+      if(this.repCb) this.repCb(arr);
+    }
+  },
+  async clearReports(){
+    if(this.mode === "cloud"){
+      const { fs } = this.fb;
+      const snap = await fs.getDocs(this.fb.repCol);
+      await Promise.all(snap.docs.map(d=> fs.deleteDoc(fs.doc(this.fb.db,"reports",d.id))));
+    } else {
+      localStorage.setItem("farm:reports", "[]");
+      if(this.repCb) this.repCb([]);
+    }
+  },
+};
+
+/* ==================================================================== STATE */
+const S = {
+  cfg:null, reports:[], sound:true,
+  stack:["worker"],
+  worker:null, kind:null, item:null, zone:null, task:null, qty:1,
+  adminTab:"reports", form:{ emoji:EMOJIS[0], color:COLORS[0] },
+};
+const screen = ()=> S.stack[S.stack.length-1];
+const esc = (s)=> String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+/* ------------------------------------------------------------------- voice */
+function speak(text){
+  if(!S.sound || !text) return;
+  try{
+    const synth = window.speechSynthesis; if(!synth) return;
+    synth.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "fr-FR"; u.rate = .95; synth.speak(u);
+  }catch(e){}
+}
+function stopVoice(){ try{ window.speechSynthesis && window.speechSynthesis.cancel(); }catch(e){} }
+
+/* -------------------------------------------------------------- navigation */
+function go(s, say){ if(say) speak(say); S.stack.push(s); render(); }
+function back(){ if(S.stack.length>1) S.stack.pop(); stopVoice(); render(); }
+function reset(){ S.stack=["worker"]; S.worker=S.kind=S.item=S.zone=S.task=null; S.qty=1; render(); }
+
+/* ===================================================================== RENDER */
+const app = document.getElementById("app");
+const trailEl = document.getElementById("trail");
+
+function tile(em, lb, color, action, id, opts){
+  opts = opts || {};
+  const small = opts.small ? " small" : "";
+  return `<div class="tile${small}" role="button" tabindex="0" data-action="${action}" data-id="${esc(id)}" style="border-color:${color}">
+    <span class="em">${em}</span><span class="lb">${esc(lb)}</span>
+    <button class="spk" data-action="speak" data-say="${esc(lb)}" style="color:${color}" aria-label="Écouter">🔊</button>
+  </div>`;
+}
+
+function render(){
+  const sc = screen();
+  document.getElementById("btnBack").style.visibility = S.stack.length>1 ? "visible" : "hidden";
+  document.getElementById("btnAdmin").style.visibility = sc==="worker" ? "visible" : "hidden";
+  renderTrail();
+
+  if(!S.cfg){ app.innerHTML = `<div style="text-align:center;padding-top:60px"><div style="font-size:64px">🌱</div><div style="color:var(--muted);margin-top:12px">Chargement…</div></div>`; return; }
+
+  if(sc==="worker"){
+    app.innerHTML = head("Qui es-tu ?","Touche ta photo") +
+      `<div class="grid">`+ S.cfg.workers.map(w=> tile(w.emoji,w.name,w.color,"pick-worker",w.id)).join("") +`</div>`;
+  }
+  else if(sc==="category"){
+    app.innerHTML = head("Qu'as-tu fait ?","Touche une image") +
+      `<div class="big2">
+        <div class="bigtile" role="button" tabindex="0" data-action="pick-kind" data-id="crop" style="background:${C.forest2}"><span class="em">🌿</span><span class="lb">Les champs</span></div>
+        <div class="bigtile" role="button" tabindex="0" data-action="pick-kind" data-id="animal" style="background:${C.soil}"><span class="em">🐔</span><span class="lb">Les animaux</span></div>
+      </div>
+      <button class="wide" data-action="all-good" style="background:${C.go}"><span style="font-size:30px">👍</span><span>Tout va bien aujourd'hui</span></button>`;
+  }
+  else if(sc==="item"){
+    const list = S.kind==="crop" ? S.cfg.crops : S.cfg.animals;
+    app.innerHTML = head(S.kind==="crop"?"Quel champ ?":"Quel animal ?","Touche une image") +
+      `<div class="grid">`+ list.map(it=> tile(it.emoji,it.name,it.color,"pick-item",it.id)).join("") +`</div>`;
+  }
+  else if(sc==="zone"){
+    app.innerHTML = head("Quelle parcelle ?", S.item.name) +
+      `<div class="grid">`+ S.item.zones.map(z=> tile(S.item.emoji,z.name,S.item.color,"pick-zone",z.id,{small:true})).join("") +`</div>`;
+  }
+  else if(sc==="task"){
+    const tasks = (S.kind==="crop"?CROP_TASKS:ANIMAL_TASKS).filter(t=>{
+      if(t.only) return S.item && S.item.id===t.only;
+      if(t.poultry) return S.item && S.item.poultry;
+      return true;
+    });
+    app.innerHTML = head("Quelle tâche ?","Touche ce que tu as fait") +
+      `<div class="grid">`+ tasks.map(t=> tile(t.emoji,t.label, t.danger?C.danger:C.cacao,"pick-task",t.id)).join("") +`</div>`;
+  }
+  else if(sc==="qty"){
+    const t = S.task; const em = (t.useItem && S.item) ? S.item.emoji : t.unitEmoji;
+    app.innerHTML = head("Combien ?", t.label) +
+      `<div class="counterWrap">
+        <div style="font-size:70px">${em}</div>
+        <div class="counter">
+          <button class="step" data-action="qty-minus" style="background:${C.danger}" aria-label="Moins">−</button>
+          <div class="count" id="countVal">${S.qty}</div>
+          <button class="step" data-action="qty-plus" style="background:${C.go}" aria-label="Plus">+</button>
+        </div>
+        <div class="unit">${esc(t.unit)}</div>
+      </div>
+      <button class="wide" data-action="qty-next" style="background:${C.forest}">✓ Continuer</button>`;
+  }
+  else if(sc==="confirm"){
+    const t=S.task;
+    let rows = cRow(S.worker.emoji, S.worker.color, S.worker.name) +
+      cRow(t.emoji, t.danger?C.danger:C.cacao, t.label);
+    if(S.item) rows += cRow(S.item.emoji, S.item.color, S.item.name);
+    if(S.zone) rows += cRow("📍", C.muted, S.zone.name);
+    if(t.qty) rows += cRow((t.useItem&&S.item)?S.item.emoji:t.unitEmoji, C.gold, S.qty+" "+t.unit, true);
+    app.innerHTML = head("C'est bien ça ?","Vérifie les images") +
+      `<div class="confirmCard">${rows}</div>
+      <div class="cBtns">
+        <button class="wide" data-action="restart" style="background:${C.muted};flex:1">✕ Recommencer</button>
+        <button class="wide" data-action="send" style="background:${C.go};flex:1.4">✓ Envoyer</button>
+      </div>`;
+  }
+  else if(sc==="done"){
+    app.innerHTML = `<div class="done">
+      <div class="doneCircle pop">✓</div>
+      <div class="doneTxt">C'est envoyé !</div>
+      <div style="color:var(--muted);font-size:18px">Merci ${esc(S.worker?S.worker.name:"")}</div>
+      <button class="wide" data-action="reset-home" style="background:${C.forest};margin-top:28px"><span style="font-size:26px">🏠</span><span>Nouveau rapport</span></button>
+    </div>`;
+  }
+}
+function head(b,s){ return `<div class="title"><b>${esc(b)}</b><span>${esc(s)}</span></div>`; }
+function cRow(em,color,txt,big){
+  return `<div class="cRow"><span class="cChip" style="background:${color};font-size:${big?32:26}px">${em}</span>
+    <span style="font-size:${big?24:19}px;font-weight:${big?800:600}">${esc(txt)}</span></div>`;
+}
+function renderTrail(){
+  const sc = screen();
+  if(sc==="worker"||sc==="done"){ trailEl.innerHTML=""; return; }
+  const t=[];
+  if(S.worker) t.push([S.worker.emoji,S.worker.color]);
+  if(S.kind==="crop") t.push(["🌿",C.forest2]);
+  if(S.kind==="animal") t.push(["🐔",C.soil]);
+  if(S.kind==="ok") t.push(["👍",C.go]);
+  if(S.item) t.push([S.item.emoji,S.item.color]);
+  if(S.task && sc!=="task") t.push([S.task.emoji, S.task.danger?C.danger:C.cacao]);
+  trailEl.innerHTML = t.map((x,i)=> `<span style="display:flex;align-items:center"><span class="chip" style="background:${x[1]}">${x[0]}</span>${i<t.length-1?'<span class="arrow">›</span>':''}</span>`).join("");
+}
+
+/* =============================================================== SUBMIT */
+function summary(){
+  const p=[]; const t=S.task;
+  if(S.worker) p.push(S.worker.name);
+  if(t) p.push(t.label);
+  if(S.item) p.push(S.item.name);
+  if(S.zone) p.push(S.zone.name);
+  if(t&&t.qty) p.push(S.qty+" "+t.unit);
+  return p.join(". ")+".";
+}
+async function submit(){
+  const t=S.task;
+  const rep = {
+    ts: Date.now(),
+    workerId:S.worker?S.worker.id:null, workerName:S.worker?S.worker.name:null, workerEmoji:S.worker?S.worker.emoji:null,
+    kind:S.kind, itemId:S.item?S.item.id:null, itemName:S.item?S.item.name:null,
+    itemEmoji:S.item?S.item.emoji:(S.kind==="ok"?"👍":null), itemColor:S.item?S.item.color:C.go,
+    zoneName:S.zone?S.zone.name:null,
+    taskId:t.id, taskLabel:t.label, taskEmoji:t.emoji,
+    qty:t.qty?S.qty:null, unit:t.qty?t.unit:null, danger:!!t.danger,
+  };
+  go("done");
+  speak("C'est envoyé. Merci "+(S.worker?S.worker.name:"")+".");
+  try{ await DB.addReport(rep); }catch(e){ console.error(e); }
+  setTimeout(reset, 4200);
+}
+
+/* ============================================================= EVENT ROUTER */
+document.addEventListener("click", (ev)=>{
+  const el = ev.target.closest("[data-action]"); if(!el) return;
+  const a = el.dataset.action, id = el.dataset.id;
+
+  switch(a){
+    case "back": back(); break;
+    case "toggle-sound":
+      S.sound=!S.sound; document.getElementById("btnSound").textContent = S.sound?"🔊":"🔇"; if(!S.sound) stopVoice(); break;
+    case "speak": speak(el.dataset.say); break;
+
+    case "pick-worker": S.worker = S.cfg.workers.find(w=>w.id===id); go("category","Bonjour "+S.worker.name); break;
+    case "pick-kind":
+      S.kind=id; S.item=S.zone=S.task=null; go("item", id==="crop"?"Les champs":"Les animaux"); break;
+    case "all-good":
+      S.kind="ok"; S.item=S.zone=null; S.task={id:"rien",label:"Tout va bien",emoji:"👍"}; go("confirm","Tout va bien aujourd'hui"); break;
+    case "pick-item": {
+      const list = S.kind==="crop"?S.cfg.crops:S.cfg.animals;
+      S.item = list.find(x=>x.id===id); S.zone=null;
+      if(S.kind==="crop" && S.item.zones && S.item.zones.length>1){ go("zone", S.item.name); }
+      else { S.zone = (S.kind==="crop" && S.item.zones && S.item.zones.length===1)?S.item.zones[0]:null; go("task", S.item.name); }
+      break;
+    }
+    case "pick-zone": S.zone = S.item.zones.find(z=>z.id===id); go("task", S.zone.name); break;
+    case "pick-task": {
+      const tasks = S.kind==="crop"?CROP_TASKS:ANIMAL_TASKS;
+      S.task = tasks.find(t=>t.id===id);
+      if(S.task.qty){ S.qty = S.task.id==="compter"?10:1; go("qty", S.task.label); }
+      else go("confirm", S.task.label);
+      break;
+    }
+    case "qty-minus": S.qty=Math.max(0,S.qty-1); document.getElementById("countVal").textContent=S.qty; speak("moins"); break;
+    case "qty-plus": S.qty=S.qty+1; document.getElementById("countVal").textContent=S.qty; speak("plus"); break;
+    case "qty-next": go("confirm", S.qty+" "+S.task.unit); break;
+    case "send": speak(summary()); submit(); break;
+    case "restart": reset(); speak("On recommence"); break;
+    case "reset-home": reset(); break;
+
+    case "open-admin": openAdmin(); break;
+    case "close-admin": document.getElementById("admin").classList.remove("open"); break;
+    case "admin-tab": S.adminTab=id; S.form={emoji:(id==="workers"?"🧑🏿‍🌾":EMOJIS[0]),color:COLORS[0]}; renderAdmin(); break;
+    case "del-report": DB.delReport(id); break;
+    case "clear-reports": if(confirm("Effacer TOUS les rapports ?")) DB.clearReports(); break;
+    case "form-emoji": S.form.emoji=el.dataset.val; renderAdmin(); break;
+    case "form-color": S.form.color=el.dataset.val; renderAdmin(); break;
+    case "mgr-add": mgrAdd(id); break;
+    case "mgr-del": mgrDel(el.dataset.kind, id); break;
+    case "zone-add": zoneAdd(id); break;
+    case "zone-del": zoneDel(el.dataset.kind, id, el.dataset.zid); break;
+  }
+});
+document.addEventListener("keydown",(ev)=>{
+  if(ev.key!=="Enter"&&ev.key!==" ") return;
+  const el=ev.target.closest("[data-action]"); if(!el) return;
+  if(el.classList.contains("tile")||el.classList.contains("bigtile")){ ev.preventDefault(); el.click(); }
+});
+
+/* ===================================================================== ADMIN */
+function openAdmin(){
+  document.getElementById("admin").classList.add("open");
+  renderAdmin();
+}
+const adminTabs = document.getElementById("adminTabs");
+const adminBody = document.getElementById("adminBody");
+function renderAdmin(){
+  const tabs=[["reports","Rapports"],["workers","Ouvriers"],["crops","Champs"],["animals","Animaux"]];
+  adminTabs.innerHTML = tabs.map(([id,l])=> `<button class="tab ${S.adminTab===id?'on':''}" data-action="admin-tab" data-id="${id}">${l}</button>`).join("");
+  if(S.adminTab==="reports") renderReports();
+  else renderManager(S.adminTab);
+}
+function fmt(ts){ return new Date(ts).toLocaleString("fr-FR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}); }
+function renderReports(){
+  const today=new Date().toDateString();
+  const nToday=S.reports.filter(r=> new Date(r.ts).toDateString()===today).length;
+  let html = `<div class="hint">${nToday} rapport(s) aujourd'hui · ${S.reports.length} au total</div>`;
+  if(S.reports.length===0){
+    html += `<div class="empty">Aucun rapport pour l'instant. Les envois des ouvriers apparaîtront ici, en direct.</div>`;
+  } else {
+    html += S.reports.map(r=> `<div class="rep" style="border-left-color:${r.danger?C.danger:(r.itemColor||C.go)}">
+      <div class="e">${r.taskEmoji||"📝"}</div>
+      <div style="flex:1">
+        <b>${esc(r.taskLabel)}${r.qty!=null?` — ${r.qty} ${esc(r.unit)}`:""}</b>
+        <div class="sub">${r.workerEmoji||""} ${esc(r.workerName||"")}${r.itemName?` · ${r.itemEmoji||""} ${esc(r.itemName)}`:""}${r.zoneName?` · ${esc(r.zoneName)}`:""}</div>
+        <div class="ts">${fmt(r.ts)}</div>
+      </div>
+      <button class="iconbtn" style="color:var(--danger);width:40px;height:40px" data-action="del-report" data-id="${esc(r.id)}" aria-label="Supprimer">🗑</button>
+    </div>`).join("");
+    html += `<button class="dangerbtn" data-action="clear-reports">Tout effacer</button>`;
+  }
+  adminBody.innerHTML = html;
+}
+function renderManager(kind){
+  const titles={ workers:"Ouvriers", crops:"Champs / cultures", animals:"Animaux" };
+  const withZones = kind==="crops";
+  const list = S.cfg[kind]||[];
+  let html = `<div class="hint">${titles[kind]} — ajoute ou retire ce que tes ouvriers verront.</div>`;
+  html += list.map(x=> `<div class="mcard">
+    <div class="mhead">
+      <span class="cChip" style="background:${x.color};font-size:24px">${x.emoji}</span>
+      <span style="font-weight:700;flex:1">${esc(x.name)}</span>
+      <button class="iconbtn" style="color:var(--danger);width:40px;height:40px" data-action="mgr-del" data-kind="${kind}" data-id="${esc(x.id)}">🗑</button>
+    </div>
+    ${withZones?renderZones(x):""}
+  </div>`).join("");
+
+  html += `<div class="addbox">
+    <div style="font-weight:700;margin-bottom:8px">Ajouter</div>
+    <input class="txt" id="mgrName" placeholder="Nom (ex. Maïs, Lapins, Awa…)" />
+    <div class="pickrow">${EMOJIS.map(e=> `<button class="epick ${S.form.emoji===e?'on':''}" data-action="form-emoji" data-val="${e}">${e}</button>`).join("")}</div>
+    <div class="pickrow">${COLORS.map(c=> `<button class="cpick" data-action="form-color" data-val="${c}" style="background:${c};outline:${S.form.color===c?'3px solid var(--ink)':'none'}"></button>`).join("")}</div>
+    <button class="addbtn" data-action="mgr-add" data-id="${kind}">+ Ajouter</button>
+  </div>`;
+  adminBody.innerHTML = html;
+}
+function renderZones(x){
+  const zones = x.zones||[];
+  return `<div class="zwrap">
+    ${zones.map(z=> `<div class="zrow"><span style="flex:1">📍 ${esc(z.name)}</span>
+      <button class="iconbtn" style="color:var(--danger);width:30px;height:30px;font-size:14px" data-action="zone-del" data-kind="crops" data-id="${esc(x.id)}" data-zid="${esc(z.id)}">✕</button></div>`).join("")}
+    <div style="display:flex;gap:6px">
+      <input class="txt" id="zname-${esc(x.id)}" style="margin-bottom:0;flex:1" placeholder="Nouvelle parcelle…" />
+      <button class="addbtn" style="padding:0 14px" data-action="zone-add" data-id="${esc(x.id)}">+</button>
+    </div>
+  </div>`;
+}
+function mgrAdd(kind){
+  const name=(document.getElementById("mgrName").value||"").trim(); if(!name) return;
+  const item={ id:kind[0]+Date.now(), name, emoji:S.form.emoji, color:S.form.color };
+  if(kind==="crops") item.zones=[];
+  const next={ ...S.cfg, [kind]:[...(S.cfg[kind]||[]), item] };
+  DB.saveConfig(next); // le listener mettra à jour S.cfg ; en local on rafraîchit aussi
+  if(DB.mode!=="cloud"){ S.cfg=next; }
+  renderAdmin();
+}
+function mgrDel(kind,id){
+  const next={ ...S.cfg, [kind]:(S.cfg[kind]||[]).filter(x=>x.id!==id) };
+  DB.saveConfig(next); if(DB.mode!=="cloud") S.cfg=next; renderAdmin();
+}
+function zoneAdd(itemId){
+  const inp=document.getElementById("zname-"+itemId); const zn=(inp.value||"").trim(); if(!zn) return;
+  const next={ ...S.cfg, crops:S.cfg.crops.map(x=> x.id===itemId?{...x, zones:[...(x.zones||[]), {id:"z"+Date.now(), name:zn}]}:x) };
+  DB.saveConfig(next); if(DB.mode!=="cloud") S.cfg=next; renderAdmin();
+}
+function zoneDel(kind,itemId,zid){
+  const next={ ...S.cfg, crops:S.cfg.crops.map(x=> x.id===itemId?{...x, zones:(x.zones||[]).filter(z=>z.id!==zid)}:x) };
+  DB.saveConfig(next); if(DB.mode!=="cloud") S.cfg=next; renderAdmin();
+}
+
+/* ===================================================================== BOOT */
+(async function(){
+  render(); // écran de chargement
+  await DB.init();
+  const pill=document.getElementById("statusPill");
+  if(DB.mode==="cloud"){ pill.className="pill cloud"; pill.textContent="Synchronisé ☁️"; }
+  else { pill.className="pill local"; pill.textContent="Mode local"; }
+
+  DB.onConfig((cfg)=>{ S.cfg=cfg; render(); if(document.getElementById("admin").classList.contains("open")) renderAdmin(); });
+  DB.onReports((reps)=>{ S.reports=reps; if(document.getElementById("admin").classList.contains("open")&&S.adminTab==="reports") renderReports(); });
+})();
+</script>
+</body>
+</html>
